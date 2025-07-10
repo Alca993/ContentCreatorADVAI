@@ -34,10 +34,8 @@ Restituisci:
     const response = await result.response.text();
 
     res.status(200).json({ result: response });
-  } catch (error) {
+ } catch (error: any) {
     console.error("Errore Gemini AI:", error);
-    if(!res.status(200).json){
-      ({ error: "Errore durante l'elaborazione AI" });
-    }
+   return res.status(500).json({ error: "Errore durante l'elaborazione AI" });
   }
 }

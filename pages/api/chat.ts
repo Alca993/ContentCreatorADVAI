@@ -65,11 +65,9 @@ export default async function handler(
     const reply = await result.response.text();
 
     return res.status(200).json({ result: reply });
-  } catch (error) {
-    console.error("Errore durante la generazione AI:", error);
-    if(!res.status(200).json){
-      return { error: "Errore interno del server" };
-    }
+ } catch (error: any) {
+  console.error("Errore durante la generazione AI:", error.message || error);
+  return res.status(500).json({ error: "Errore interno del server" });
+ }
     
-  }
 }
