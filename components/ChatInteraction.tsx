@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 interface ChatInteractionProps {
   context: string;
@@ -13,13 +13,23 @@ export default function ChatInteraction({ context }: ChatInteractionProps) {
   const [messages, setMessages] = useState<Message[]>([]);
   const [userInput, setUserInput] = useState("");
   const [loading, setLoading] = useState(false);
+  const messagesEndRef = useRef<HTMLDivElement | null>(null); // 👈 Per scroll automatico
+
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  };
+
+  useEffect(() => {
+    scrollToBottom();
+  }, [messages, loading]);
 
   const handleSend = async () => {
     if (!userInput.trim()) return;
 
-    const initialPrompt = messages.length === 0
-      ? `Contesto post originale:\n${context}\n\n${userInput}`
-      : userInput;
+    const initialPrompt =
+      messages.length === 0
+        ? `Contesto post originale:\n${context}\n\n${userInput}`
+        : userInput;
 
     const newMessages: Message[] = [...messages, { role: "user", content: initialPrompt }];
     setMessages(newMessages);
@@ -36,7 +46,6 @@ export default function ChatInteraction({ context }: ChatInteractionProps) {
       if (data.result) {
         setMessages((prev) => [...prev, { role: "assistant", content: data.result }]);
       }
-
     } catch (error) {
       setMessages((prev) => [
         ...prev,
@@ -51,7 +60,7 @@ export default function ChatInteraction({ context }: ChatInteractionProps) {
     { icon: "🎵", text: "Adatta per TikTok", action: "Riscrivilo per TikTok con hook coinvolgenti" },
     { icon: "🎯", text: "Nuove CTA", action: "Suggerisci 3 call-to-action diverse e più efficaci" },
     { icon: "📱", text: "Instagram Stories", action: "Crea una versione per Instagram Stories" },
-    { icon: "💡", text: "Più engagement", action: "Come posso aumentare l'engagement di questo post?" }
+    { icon: "💡", text: "Più engagement", action: "Come posso aumentare l'engagement di questo post?" },
   ];
 
   return (
@@ -94,7 +103,7 @@ export default function ChatInteraction({ context }: ChatInteractionProps) {
                 </div>
               </div>
             ))}
-            
+
             {loading && (
               <div className="flex justify-start">
                 <div className="bg-white text-slate-800 border border-slate-200 p-4 rounded-2xl shadow-sm max-w-[80%]">
@@ -107,6 +116,9 @@ export default function ChatInteraction({ context }: ChatInteractionProps) {
                 </div>
               </div>
             )}
+
+            {/* Punto di riferimento per lo scroll automatico */}
+            <div ref={messagesEndRef} />
           </div>
         )}
       </div>
