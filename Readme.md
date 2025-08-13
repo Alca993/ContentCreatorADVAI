@@ -12,4 +12,7 @@ guidando e supportando gli utenti che ne fanno uso.
     - Adattabilità di visualizzazione ad ogni risoluzione.
     - Output della risposta ripulita dai markdown.
     - Aggiunto tasto Reset in grado di resettare la conversazione.
-    - Scrolling automatico alla Chat AI. 
+    - Scrolling automatico alla Chat AI.
+
+### Versione 1.1.1
+    - Reso il campo tono di voce personalizzabile, aggiunti nuovi toni.

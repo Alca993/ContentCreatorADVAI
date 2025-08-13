@@ -1,5 +1,7 @@
 import React, { useState } from "react";
 import Result from "../components/Result";
+import CreatableSelect from "react-select/creatable";
+import type { MultiValue } from "react-select";
 
 export default function Home() {
   const [caption, setCaption] = useState("");
@@ -7,9 +9,40 @@ export default function Home() {
   const [metrics, setMetrics] = useState("");
   const [platform, setPlatform] = useState("Instagram");
   const [result, setResult] = useState("");
-  const [tone, setTone] = useState("Coinvolgente");
+  //const [tone, setTone] = useState("Coinvolgente");
   const [loading, setLoading] = useState(false);
   const [hasResult, setHasResult] = useState(false);
+  const [tone, setTone] = useState<OptionType[]>([]);
+
+    type OptionType = {
+    value: string;
+    label: string;
+  };
+
+const defaultToneOptions: OptionType[] = [
+  { value: "Coinvolgente", label: "🤝 Coinvolgente" },
+  { value: "Professionale", label: "💼 Professionale" },
+  { value: "Creativo", label: "🎨 Creativo" },
+  { value: "Ironico", label: "😄 Ironico" },
+  { value: "Motivazionale", label: "💪 Motivazionale" },
+  { value: "Energico", label: "🏎️ Energico"},
+  { value: "Serioso", label: "🥸 Serioso"},
+  { value: "Tecnico", label: "💻 Tecnico"},
+  { value: "Coinvolgente 70%, Professionale 30%", label: "🕶️ Coinvolgente 70%, Professionale 30%"},
+];
+
+const [options, setOptions] = useState<OptionType[]>(defaultToneOptions);
+
+const handleChange = (newValue: MultiValue<OptionType>) => {
+    setTone([...newValue]); // 👈 Copia per trasformare readonly → mutabile
+  };
+
+ const handleCreate = (inputValue: string) => {
+    const newOption = { value: inputValue, label: inputValue };
+    setOptions((prev) => [...prev, newOption]); // aggiunge alla lista globale
+    setTone((prev) => [...prev, newOption]);   // aggiunge anche ai selezionati
+ };  
+
 
   function stripMarkdown(text: string): string {
   return text
@@ -26,12 +59,12 @@ export default function Home() {
     setLoading(true);
     setHasResult(true);
     setResult("");
-    
+    const toneText = tone.map(t => t.value).join(", ");
     try {
       const res = await fetch("/api/analyze", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ caption, hashtag, metrics, platform, tone }),
+        body: JSON.stringify({ caption, hashtag, metrics, platform, tone: toneText }),
       });
       const data = await res.json();
       const cleaned = stripMarkdown(data.result);
@@ -52,7 +85,7 @@ export default function Home() {
     setHashtag("");
     setMetrics("");
     setPlatform("Instagram");
-    setTone("Coinvolgente");
+    setTone(([]));
   };
 
   const handleRegenerate = () => {
@@ -75,6 +108,8 @@ export default function Home() {
       setLoading(false);
     }, 1500);
   };
+
+
 
 return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 p-2 sm:p-4 lg:p-8">
@@ -207,17 +242,16 @@ return (
                     <span className="text-xl sm:text-2xl mr-2 sm:mr-3">🎭</span>
                     Tono di voce
                   </label>
-                  <select
+                  <CreatableSelect<OptionType, true>
+                    isMulti
+                    options={options}
                     value={tone}
-                    onChange={(e) => setTone(e.target.value)}
+                    onChange={handleChange}
+                    onCreateOption={handleCreate}
                     className="w-full p-3 sm:p-4 lg:p-5 border-2 border-slate-200 rounded-xl sm:rounded-2xl shadow-sm focus:ring-4 focus:ring-orange-500/20 focus:border-orange-500 focus:outline-none transition-all duration-300 bg-slate-50/80 hover:bg-white hover:shadow-md cursor-pointer text-sm sm:text-base"
-                  >
-                    <option value="Coinvolgente">🤝 Coinvolgente</option>
-                    <option value="Professionale">💼 Professionale</option>
-                    <option value="Creativo">🎨 Creativo</option>
-                    <option value="Ironico">😄 Ironico</option>
-                    <option value="Motivazionale">💪 Motivazionale</option>
-                  </select>
+                    placeholder="Seleziona o scrivi toni personalizzati..."
+                    isClearable
+                  />
                 </div>
               </div>
             </div>
