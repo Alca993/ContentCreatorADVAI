@@ -38,7 +38,7 @@ export default async function handler(
       return res.status(400).json({ error: "L'ultimo messaggio deve avere ruolo 'user'" });
     }
 
-    const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
+    const model = genAI.getGenerativeModel({ model: "gemini-2.5-pro" });
 
 
     // Converte la cronologia nel formato richiesto da Gemini
