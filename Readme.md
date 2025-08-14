@@ -16,3 +16,4 @@ guidando e supportando gli utenti che ne fanno uso.
 
 ### Versione 1.1.1
     - Reso il campo tono di voce personalizzabile, aggiunti nuovi toni.
+    - Output della risposta ripulita dai markdown per la chat.
