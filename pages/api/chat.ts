@@ -31,7 +31,7 @@ export default async function handler(
     const history = messages.slice(0, -1);
     const userMessageWithContext = {
       ...userMessage,
-      content: `${SYSTEM_CONTEXT}\n\n${history}\n\n${userMessage.content}`,
+      content: userMessage.content,
     };
 
     if (userMessage.role !== "user") {

@@ -20,15 +20,16 @@ export default function ChatInteraction({ context }: ChatInteractionProps) {
   };
 
   function stripMarkdown(text: string): string {
+    // Rimuovi il markdown mantenendo gli hashtag
     return text
       .replace(/^>+\s?/gm, "")                // blocchi quote
       .replace(/[*_~`]+/g, "")                // *, _, ~, `
-      .replace(/^#{1,6}\s+/gm, "")           // solo i titoli markdown (# all'inizio riga seguito da spazio)
-      .replace(/-{3,}/g, "")                  // --- separatori
+      .replace(/^#{1,6}\s+/gm, "")           // titoli markdown
+      .replace(/-{3,}/g, "")                  // separatori
       .replace(/\n{2,}/g, "\n\n")            // normalizza spazi
-      .replace(/(?<!#)#(?![\w#])/g, "")      // rimuovi # isolati (non parte di hashtag)
+      .replace(/\\#/g, "#")                   // rimuovi backslash davanti agli hashtag
       .trim();
-}
+  }
 
   useEffect(() => {
     scrollToBottom();
