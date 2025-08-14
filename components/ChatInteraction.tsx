@@ -19,6 +19,16 @@ export default function ChatInteraction({ context }: ChatInteractionProps) {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   };
 
+    function stripMarkdown(text: string): string {
+  return text
+    .replace(/^>+\s?/gm, "")                // blocchi quote
+    .replace(/[*_~`]+/g, "")                // *, _, ~, `
+    .replace(/#+\s?/g, "")                  // titoli #, ##, ###
+    .replace(/-{3,}/g, "")                  // --- separatori
+    .replace(/\n{2,}/g, "\n\n")             // normalizza spazi
+    .trim();
+}
+
   useEffect(() => {
     scrollToBottom();
   }, [messages, loading]);
@@ -43,8 +53,9 @@ export default function ChatInteraction({ context }: ChatInteractionProps) {
         body: JSON.stringify({ messages: newMessages }),
       });
       const data = await res.json();
-      if (data.result) {
-        setMessages((prev) => [...prev, { role: "assistant", content: data.result }]);
+      const cleaned = stripMarkdown(data.result || "");
+      if (cleaned) {
+        setMessages((prev) => [...prev, { role: "assistant", content: cleaned }]);
       }
     } catch (error) {
       setMessages((prev) => [
