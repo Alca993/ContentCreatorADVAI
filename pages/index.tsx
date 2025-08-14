@@ -45,13 +45,14 @@ const handleChange = (newValue: MultiValue<OptionType>) => {
 
 
   function stripMarkdown(text: string): string {
-  return text
-    .replace(/^>+\s?/gm, "")                // blocchi quote
-    .replace(/[*_~`]+/g, "")                // *, _, ~, `
-    .replace(/#+\s?/g, "")                  // titoli #, ##, ###
-    .replace(/-{3,}/g, "")                  // --- separatori
-    .replace(/\n{2,}/g, "\n\n")             // normalizza spazi
-    .trim();
+    return text
+      .replace(/^>+\s?/gm, "")                // blocchi quote
+      .replace(/[*_~`]+/g, "")                // *, _, ~, `
+      .replace(/^#{1,6}\s+/gm, "")           // solo i titoli markdown (# all'inizio riga seguito da spazio)
+      .replace(/-{3,}/g, "")                  // --- separatori
+      .replace(/\n{2,}/g, "\n\n")            // normalizza spazi
+      .replace(/(?<!#)#(?![\w#])/g, "")      // rimuovi # isolati (non parte di hashtag)
+      .trim();
 }
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -91,13 +92,14 @@ const handleChange = (newValue: MultiValue<OptionType>) => {
   const handleRegenerate = () => {
     setLoading(true);
     setResult("");
+    const toneText = tone.map(t => t.value).join(", ");
     // Simula rigenerazione con nuovo tono
     setTimeout(async () => {
       try {
       const res = await fetch("/api/analyze", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ caption, hashtag, metrics, platform, tone }),
+        body: JSON.stringify({ caption, hashtag, metrics, platform, tone: toneText }),
       });
       const data = await res.json();
       const cleaned = stripMarkdown(data.result);

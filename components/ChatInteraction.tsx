@@ -19,14 +19,15 @@ export default function ChatInteraction({ context }: ChatInteractionProps) {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   };
 
-    function stripMarkdown(text: string): string {
-  return text
-    .replace(/^>+\s?/gm, "")                // blocchi quote
-    .replace(/[*_~`]+/g, "")                // *, _, ~, `
-    .replace(/#+\s?/g, "")                  // titoli #, ##, ###
-    .replace(/-{3,}/g, "")                  // --- separatori
-    .replace(/\n{2,}/g, "\n\n")             // normalizza spazi
-    .trim();
+  function stripMarkdown(text: string): string {
+    return text
+      .replace(/^>+\s?/gm, "")                // blocchi quote
+      .replace(/[*_~`]+/g, "")                // *, _, ~, `
+      .replace(/^#{1,6}\s+/gm, "")           // solo i titoli markdown (# all'inizio riga seguito da spazio)
+      .replace(/-{3,}/g, "")                  // --- separatori
+      .replace(/\n{2,}/g, "\n\n")            // normalizza spazi
+      .replace(/(?<!#)#(?![\w#])/g, "")      // rimuovi # isolati (non parte di hashtag)
+      .trim();
 }
 
   useEffect(() => {

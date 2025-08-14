@@ -17,3 +17,7 @@ guidando e supportando gli utenti che ne fanno uso.
 ### Versione 1.1.1
     - Reso il campo tono di voce personalizzabile, aggiunti nuovi toni.
     - Output della risposta ripulita dai markdown per la chat.
+
+### Versione 1.1.2
+    - Fix tono di voce premuto il tasto di rigenerazione.
+    - Hashtag resi più visibili e corretti nell'output.
